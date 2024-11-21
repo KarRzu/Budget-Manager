@@ -3,7 +3,7 @@ import { CgNotes, CgProfile } from "react-icons/cg";
 import { GrMoney } from "react-icons/gr";
 import { RxDashboard } from "react-icons/rx";
 import { ROUTES } from "../../router/routes";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 export const SidebarLinks = [
   { path: ROUTES.dashboard, name: "Dashboard", icons: RxDashboard },
