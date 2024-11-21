@@ -1,13 +1,24 @@
+import { SubmitHandler, useForm } from "react-hook-form";
+
 export type ModalProps = {
   closeModal: () => void;
+  addBudget: (newBudget: { budgetName: string; amountName: string }) => void;
 };
 
-export function Modal({ closeModal }: ModalProps) {
+export type InputFields = {
+  budgetName: string;
+  amountName: string;
+};
+
+export function Modal({ closeModal, addBudget }: ModalProps) {
+  const { register, handleSubmit } = useForm<InputFields>();
+  const onSubmit: SubmitHandler<InputFields> = (data) => {
+    addBudget(data);
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      {/* Modal Window */}
       <div className="relative bg-white w-full max-w-lg p-8 rounded-lg shadow-lg">
-        {/* Close Button */}
         <button
           onClick={closeModal}
           className="absolute top-4 right-4 bg-red-500 text-white py-1 px-3 rounded-full hover:bg-red-600 transition"
@@ -19,8 +30,7 @@ export function Modal({ closeModal }: ModalProps) {
           Create New Budget
         </h1>
 
-        <form className="space-y-4">
-          {/* Budget Name */}
+        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div>
             <label
               htmlFor="name"
@@ -33,10 +43,10 @@ export function Modal({ closeModal }: ModalProps) {
               id="name"
               placeholder="e.g. Home Decor"
               className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 "
+              {...register("budgetName")}
             />
           </div>
 
-          {/* Budget Amount */}
           <div>
             <label
               htmlFor="price"
@@ -49,6 +59,7 @@ export function Modal({ closeModal }: ModalProps) {
               id="price"
               placeholder="e.g. 500$"
               className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 "
+              {...register("amountName")}
             />
           </div>
 
