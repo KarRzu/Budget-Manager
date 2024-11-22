@@ -1,13 +1,22 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { auth } from "../../../auth/firebase-config";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../../../router/routes";
 
-export function SignIn() {
+export function SignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const SignIn = async () => {
-    await createUserWithEmailAndPassword(auth, email, password);
+  const SignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate(ROUTES.dashboard);
+    } catch (error) {
+      console.log("Invalid email or password");
+    }
   };
 
   return (
@@ -16,7 +25,7 @@ export function SignIn() {
         <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">
           Sign In
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={SignIn} className="space-y-4">
           <div>
             <label
               htmlFor="email"

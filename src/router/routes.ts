@@ -6,4 +6,6 @@ export const ROUTES = {
   budgets: "/budgets",
   expenses: "/expenses",
   profile: "/profile",
+  signIn: "/sign-in",
+  signUp: "/sign-up",
 };
