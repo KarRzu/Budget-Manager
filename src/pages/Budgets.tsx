@@ -1,12 +1,19 @@
 import { useEffect, useState } from "react";
 import { Card } from "../components/shared/card/Card";
 import { Modal } from "../components/shared/Modal";
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "../auth/firebase-config";
 
 export type Budget = {
   budgetName: string;
   amountName: string;
+  id: string;
 };
 
 export function Budgets() {
@@ -23,6 +30,17 @@ export function Budgets() {
         id: doc.id,
       }));
       setBudgets(filteredData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteBudgets = async (id: string) => {
+    try {
+      const budgetDoc = doc(db, "budgets", id);
+      await deleteDoc(budgetDoc);
+
+      getBudgets();
     } catch (error) {
       console.log(error);
     }
@@ -75,6 +93,7 @@ export function Budgets() {
               </div>
               <p className="text-sm text-gray-500 mt-1">50% used</p>
             </div>
+            <button onClick={() => deleteBudgets(budget.id)}>Delete</button>
           </div>
         ))}
 
