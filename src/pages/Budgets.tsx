@@ -7,6 +7,7 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../auth/firebase-config";
 
@@ -18,7 +19,8 @@ export type Budget = {
 
 export function Budgets() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [budgets, setBudgets] = useState([]);
+  const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [currentBudgets, setCurrentBudgets] = useState<Budget | null>(null);
 
   const budgetsCollectionRef = collection(db, "budgets");
 
@@ -29,7 +31,7 @@ export function Budgets() {
         ...doc.data(),
         id: doc.id,
       }));
-      setBudgets(filteredData);
+      setBudgets(filteredData as Budget[]);
     } catch (error) {
       console.log(error);
     }
@@ -46,6 +48,26 @@ export function Budgets() {
     }
   };
 
+  const editBudgets = async (budget: Budget) => {
+    setCurrentBudgets(budget);
+    setIsModalOpen(true);
+  };
+
+  const updateBudget = async (updatedBudget: Budget) => {
+    try {
+      const budgetDoc = doc(db, "budgets", updatedBudget.id);
+      await updateDoc(budgetDoc, {
+        name: updatedBudget.budgetName,
+        amount: updatedBudget.amountName,
+      });
+      setIsModalOpen(false);
+      setCurrentBudgets(null);
+      getBudgets();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getBudgets();
   }, []);
@@ -55,11 +77,17 @@ export function Budgets() {
     amountName: string;
   }) => {
     try {
-      await addDoc(budgetsCollectionRef, {
-        name: data.budgetName,
-        amount: data.amountName,
-      });
+      if (currentBudgets) {
+        await updateBudget({ ...currentBudgets, ...data });
+      } else {
+        await addDoc(budgetsCollectionRef, {
+          name: data.budgetName,
+          amount: data.amountName,
+        });
+      }
+
       setIsModalOpen(false);
+      setCurrentBudgets(null);
       getBudgets();
     } catch (error) {
       console.log(error);
@@ -75,11 +103,13 @@ export function Budgets() {
 
       <div className="flex flex-wrap justify-center items-center gap-6 p-4">
         {budgets.map((budget) => (
-          <div className="w-64 bg-white h-40 p-4 border rounded-lg shadow-md hover:shadow-lg transition-all">
+          <div
+            key={budget.id}
+            className="w-64 bg-white h-50 p-4 border rounded-lg shadow-md hover:shadow-lg transition-all"
+          >
             <h2 className="text-xl font-bold text-gray-800 truncate">
               {budget.name}
             </h2>
-
             <p className="text-gray-600 mt-2 text-lg font-semibold">
               {budget.amount}
             </p>
@@ -93,7 +123,22 @@ export function Budgets() {
               </div>
               <p className="text-sm text-gray-500 mt-1">50% used</p>
             </div>
-            <button onClick={() => deleteBudgets(budget.id)}>Delete</button>
+
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => deleteBudgets(budget.id)}
+                className="mt-4 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300 transition"
+              >
+                Delete
+              </button>
+
+              <button
+                onClick={() => editBudgets(budget)}
+                className="mt-4 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300 transition"
+              >
+                Edit
+              </button>
+            </div>
           </div>
         ))}
 
@@ -101,7 +146,11 @@ export function Budgets() {
       </div>
 
       {isModalOpen && (
-        <Modal closeModal={closeModal} addBudget={onSubmitBudgets} />
+        <Modal
+          closeModal={closeModal}
+          addBudget={onSubmitBudgets}
+          currentBudgets={currentBudgets}
+        />
       )}
     </>
   );

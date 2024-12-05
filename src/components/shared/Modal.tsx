@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 export type ModalProps = {
   closeModal: () => void;
   addBudget: (newBudget: { budgetName: string; amountName: string }) => void;
+  currentBudgets: { budgetName: string; amountName: string } | null;
 };
 
 export type InputFields = {
@@ -10,8 +12,13 @@ export type InputFields = {
   amountName: string;
 };
 
-export function Modal({ closeModal, addBudget }: ModalProps) {
-  const { register, handleSubmit } = useForm<InputFields>();
+export function Modal({ closeModal, addBudget, currentBudgets }: ModalProps) {
+  const { register, handleSubmit, reset } = useForm<InputFields>({});
+
+  // useEffect(() => {
+  //   reset(currentBudgets || { budgetName: "", amountName: "" });
+  // }, [currentBudgets, reset]);
+
   const onSubmit: SubmitHandler<InputFields> = (data) => {
     addBudget(data);
   };
@@ -27,7 +34,7 @@ export function Modal({ closeModal, addBudget }: ModalProps) {
         </button>
 
         <h1 className="text-gray-700 font-bold text-2xl mb-4">
-          Create New Budget
+          {currentBudgets ? "Edit Budget" : "Create New Budget"}
         </h1>
 
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
@@ -64,7 +71,7 @@ export function Modal({ closeModal, addBudget }: ModalProps) {
           </div>
 
           <button className="w-full bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition">
-            Create Budget
+            {currentBudgets ? "Update Budget" : "Create Budget"}
           </button>
         </form>
       </div>
