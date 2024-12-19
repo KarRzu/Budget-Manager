@@ -12,15 +12,16 @@ import {
 import { db } from "../auth/firebase-config";
 
 export type Budget = {
-  budgetName: string;
-  amountName: string;
+  name: string;
+  amount: string;
   id: string;
 };
 
 export function Budgets() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [budgets, setBudgets] = useState<Budget[]>([]);
-  const [currentBudgets, setCurrentBudgets] = useState<Budget | null>(null);
+  const [newBudget, setnewBudget] = useState({ name: "", amount: "" });
+  const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
 
   const budgetsCollectionRef = collection(db, "budgets");
 
@@ -49,7 +50,7 @@ export function Budgets() {
   };
 
   const editBudgets = async (budget: Budget) => {
-    setCurrentBudgets(budget);
+    setEditingBudget(budget);
     setIsModalOpen(true);
   };
 
@@ -57,11 +58,11 @@ export function Budgets() {
     try {
       const budgetDoc = doc(db, "budgets", updatedBudget.id);
       await updateDoc(budgetDoc, {
-        name: updatedBudget.budgetName,
-        amount: updatedBudget.amountName,
+        name: updatedBudget.name,
+        amount: updatedBudget.amount,
       });
       setIsModalOpen(false);
-      setCurrentBudgets(null);
+      setEditingBudget(null);
       getBudgets();
     } catch (error) {
       console.log(error);
@@ -77,8 +78,14 @@ export function Budgets() {
     amountName: string;
   }) => {
     try {
-      if (currentBudgets) {
-        await updateBudget({ ...currentBudgets, ...data });
+      if (editingBudget) {
+        await updateBudget({
+          ...editingBudget,
+          ...data,
+          name: "",
+          amount: "",
+          id: "",
+        });
       } else {
         await addDoc(budgetsCollectionRef, {
           name: data.budgetName,
@@ -87,7 +94,7 @@ export function Budgets() {
       }
 
       setIsModalOpen(false);
-      setCurrentBudgets(null);
+      setEditingBudget(null);
       getBudgets();
     } catch (error) {
       console.log(error);
@@ -149,7 +156,14 @@ export function Budgets() {
         <Modal
           closeModal={closeModal}
           addBudget={onSubmitBudgets}
-          currentBudgets={currentBudgets}
+          currentBudgets={
+            editingBudget
+              ? {
+                  budgetName: editingBudget.name,
+                  amountName: editingBudget.amount,
+                }
+              : null
+          }
         />
       )}
     </>

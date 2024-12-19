@@ -15,9 +15,14 @@ export type InputFields = {
 export function Modal({ closeModal, addBudget, currentBudgets }: ModalProps) {
   const { register, handleSubmit, reset } = useForm<InputFields>({});
 
-  // useEffect(() => {
-  //   reset(currentBudgets || { budgetName: "", amountName: "" });
-  // }, [currentBudgets, reset]);
+  useEffect(() => {
+    if (currentBudgets) {
+      reset({
+        budgetName: currentBudgets.budgetName,
+        amountName: currentBudgets.amountName,
+      });
+    }
+  }, [currentBudgets, reset]);
 
   const onSubmit: SubmitHandler<InputFields> = (data) => {
     addBudget(data);
