@@ -1,50 +1,43 @@
-# React + TypeScript + Vite
+# BudgetManager - A Budget Management System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**BudgetManager** is a simple budget management system designed to help users manage their financial data efficiently. It is built using:
 
-Currently, two official plugins are available:
+- **React**
+- **TypeScript**
+- **Vite**
+- **Tailwind CSS**
+- **Firebase** (for backend and data storage)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 👾 Features
 
-## Expanding the ESLint configuration
+- Add, edit, and delete budget entries.
+- View a list of budgets with categories.
+- User-friendly forms for inputting budget and expense information.
+- All data is saved in Firebase, providing persistent storage.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+---
 
-- Configure the top-level `parserOptions` property like this:
+## 📒 Process
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
-```
+I started by implementing user authentication with login and registration features. Next, I developed a budget management system, allowing users to easily add, edit, and delete budget records.
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+After completing the budget management feature, I focused on enhancing the overall user experience by adding visual cues and validation for data inputs. The system ensures that users have a seamless experience when managing their finances.
 
-```js
-// eslint.config.js
-import react from "eslint-plugin-react";
+I styled the application using **Tailwind CSS**, ensuring a modern and responsive design. The design draws inspiration from popular budget management systems and best practices in UI/UX design.
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: "18.3" } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs["jsx-runtime"].rules,
-  },
-});
-```
+All data is stored securely in Firebase, allowing users to access their information anytime.
+
+---
+
+**NOTE**: The primary purpose of this project is to demonstrate a basic budget management system and showcase the use of React and Firebase. It is not intended to be a full-fledged financial application.
+
+---
+
+## 🚦 Running the Project
+
+To run the project in your local environment, follow these steps:
+
+1. Clone the repository to your local machine.
+2. Run `npm install` or `yarn` in the project directory to install the required dependencies.
+3. Run `npm run start` or `yarn start` to get the project started.
+4. Open `http://localhost:5173` (or the address shown in your console) in your web browser to view the app.
