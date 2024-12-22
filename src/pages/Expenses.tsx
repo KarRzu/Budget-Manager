@@ -1,20 +1,45 @@
+import { useEffect, useState } from "react";
+import { Budget } from "./Budgets";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../auth/firebase-config";
+
 export function Expenses() {
-  const expenses = [
-    { id: 1, date: "2024-12-15", description: "Groceries", amount: 45.99 },
-    {
-      id: 2,
-      date: "2024-12-16",
-      description: "Electricity Bill",
-      amount: 75.5,
-    },
-    {
-      id: 3,
-      date: "2024-12-17",
-      description: "Internet Subscription",
-      amount: 30.0,
-    },
-    { id: 4, date: "2024-12-18", description: "Coffee Shop", amount: 12.5 },
-  ];
+  const [expenses, setExpenses] = useState<Budget[]>([]);
+
+  const budgetsCollectionRef = collection(db, "budgets");
+
+  const fetchedExpenses = async () => {
+    try {
+      const data = await getDocs(budgetsCollectionRef);
+      const fetchExpenses = data.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      })) as Budget[];
+      setExpenses(fetchExpenses);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getBudgets = async () => {
+    try {
+      const data = await fetchedExpenses();
+      const sortedBudgets = data
+        .sort(
+          (a, b) =>
+            new Date(b?.date || new Date()).getTime() -
+            new Date(a?.date || new Date()).getTime()
+        )
+        .slice(0, 5);
+      setExpenses(sortedBudgets);
+    } catch (error) {
+      console.error("Error sorting budgets:", error);
+    }
+  };
+
+  useEffect(() => {
+    getBudgets();
+  }, []);
 
   return (
     <>
@@ -40,13 +65,13 @@ export function Expenses() {
             {expenses.map((expense) => (
               <tr key={expense.id}>
                 <td className="border border-gray-300 px-4 py-2">
-                  {expense.date}
+                  {new Date(expense.date || new Date()).toLocaleDateString()}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {expense.description}
+                  {expense.name}
                 </td>
                 <td className="border border-gray-300 px-4 py-2 text-right">
-                  ${expense.amount.toFixed(2)}
+                  {expense.amount}
                 </td>
               </tr>
             ))}

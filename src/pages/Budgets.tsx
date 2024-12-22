@@ -12,6 +12,7 @@ import {
 import { db } from "../auth/firebase-config";
 
 export type Budget = {
+  date: string | number | Date;
   name: string;
   amount: string;
   id: string;
