@@ -20,7 +20,6 @@ export type Budget = {
 export function Budgets() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [budgets, setBudgets] = useState<Budget[]>([]);
-  const [newBudget, setnewBudget] = useState({ name: "", amount: "" });
   const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
 
   const budgetsCollectionRef = collection(db, "budgets");
@@ -49,20 +48,10 @@ export function Budgets() {
     }
   };
 
-  const editBudgets = async (budget: Budget) => {
-    setEditingBudget(budget);
-    setIsModalOpen(true);
-  };
-
-  const updateBudget = async (updatedBudget: Budget) => {
+  const editBudget = async (id: string, updatedData: Partial<Budget>) => {
     try {
-      const budgetDoc = doc(db, "budgets", updatedBudget.id);
-      await updateDoc(budgetDoc, {
-        name: updatedBudget.name,
-        amount: updatedBudget.amount,
-      });
-      setIsModalOpen(false);
-      setEditingBudget(null);
+      const budgetDoc = doc(db, "budgets", id);
+      await updateDoc(budgetDoc, updatedData);
       getBudgets();
     } catch (error) {
       console.log(error);
@@ -79,12 +68,9 @@ export function Budgets() {
   }) => {
     try {
       if (editingBudget) {
-        await updateBudget({
-          ...editingBudget,
-          ...data,
-          name: "",
-          amount: "",
-          id: "",
+        await editBudget(editingBudget.id, {
+          name: data.budgetName,
+          amount: data.amountName,
         });
       } else {
         await addDoc(budgetsCollectionRef, {
@@ -92,7 +78,6 @@ export function Budgets() {
           amount: data.amountName,
         });
       }
-
       setIsModalOpen(false);
       setEditingBudget(null);
       getBudgets();
@@ -101,9 +86,20 @@ export function Budgets() {
     }
   };
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const openModal = () => {
+    setIsModalOpen(true);
+    setEditingBudget(null);
+  };
 
+  const startEditing = (budget: Budget) => {
+    setEditingBudget(budget);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditingBudget(null);
+  };
   return (
     <>
       <h1 className="p-8 text-2xl font-bold">My Budgets</h1>
@@ -140,7 +136,7 @@ export function Budgets() {
               </button>
 
               <button
-                onClick={() => editBudgets(budget)}
+                onClick={() => startEditing(budget)}
                 className="mt-4 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300 transition"
               >
                 Edit
@@ -156,14 +152,7 @@ export function Budgets() {
         <Modal
           closeModal={closeModal}
           addBudget={onSubmitBudgets}
-          currentBudgets={
-            editingBudget
-              ? {
-                  budgetName: editingBudget.name,
-                  amountName: editingBudget.amount,
-                }
-              : null
-          }
+          editingBudget={editingBudget}
         />
       )}
     </>

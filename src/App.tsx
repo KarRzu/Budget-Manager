@@ -17,7 +17,7 @@ function App() {
         <Route path={ROUTES.signIn} element={<SignInForm />} />
         <Route path={ROUTES.signUp} element={<SignUpForm />} />
         <Route path="/" element={<Layout />}>
-          <Route path={ROUTES.dashboard} element={<Dashboard />} />
+          <Route index element={<Dashboard />} />
           <Route path={ROUTES.budgets} element={<Budgets />} />
           <Route path={ROUTES.expenses} element={<Expenses />} />
           <Route path={ROUTES.incomes} element={<Incomes />} />
