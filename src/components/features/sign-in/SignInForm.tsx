@@ -1,7 +1,7 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { auth } from "../../../auth/firebase-config";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ROUTES } from "../../../router/routes";
 
 export function SignInForm() {
@@ -73,9 +73,9 @@ export function SignInForm() {
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-600">
             Don't have an account?{" "}
-            <a href="/sign-up" className="text-blue-500 hover:underline">
+            <Link to={ROUTES.signUp} className="text-blue-500 hover:underline">
               Sign Up
-            </a>
+            </Link>
           </p>
         </div>
       </div>

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { auth } from "../../../auth/firebase-config";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { Link } from "react-router-dom";
+import { ROUTES } from "../../../router/routes";
 
 export function SignUpForm() {
   const [email, setEmail] = useState("");
@@ -8,7 +10,11 @@ export function SignUpForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const SignUp = async () => {
-    await createUserWithEmailAndPassword(auth, email, password);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      console.error("Sign Up Error:", error);
+    }
   };
 
   return (
@@ -18,7 +24,6 @@ export function SignUpForm() {
           Sign Up
         </h2>
         <form onSubmit={SignUp} className="space-y-4">
-          {/* Email Field */}
           <div>
             <label
               htmlFor="email"
@@ -37,7 +42,6 @@ export function SignUpForm() {
             />
           </div>
 
-          {/* Password Field */}
           <div>
             <label
               htmlFor="password"
@@ -56,7 +60,6 @@ export function SignUpForm() {
             />
           </div>
 
-          {/* Confirm Password Field */}
           <div>
             <label
               htmlFor="confirmPassword"
@@ -73,7 +76,6 @@ export function SignUpForm() {
             />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 transition-all duration-200"
@@ -85,9 +87,9 @@ export function SignUpForm() {
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-600">
             Already have an account?{" "}
-            <a href="/sign-in" className="text-blue-500 hover:underline">
+            <Link to={ROUTES.signIn} className="text-blue-500 hover:underline">
               Sign In
-            </a>
+            </Link>
           </p>
         </div>
       </div>
